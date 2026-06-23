@@ -30,7 +30,17 @@ export class Register {
           }, 2000);
         },
         error: (err) => {
-          this.errorMessage.set(err.error?.message || 'Registration failed.');
+          let msg = err.error?.message || err.error?.title || 'Registration failed.';
+          if (err.error?.errors) {
+            if (typeof err.error.errors === 'object' && !Array.isArray(err.error.errors)) {
+              msg = Object.values(err.error.errors).flat().join(' ');
+            } else if (Array.isArray(err.error.errors)) {
+              msg = err.error.errors.join(' ');
+            }
+          } else if (err.error?.detail) {
+            msg = err.error.detail;
+          }
+          this.errorMessage.set(msg);
           this.successMessage.set('');
         }
       });
