@@ -1,0 +1,92 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h2 class="mb-4">My Todos</h2>
+
+      @if (errorMessage()) {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {{ errorMessage() }}
+          <button type="button" class="btn-close" (click)="errorMessage.set(null)" aria-label="Close"></button>
+        </div>
+      }
+
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex gap-2 mb-3">
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Search todos..." 
+              [(ngModel)]="searchQuery" 
+              (keyup.enter)="onSearch()"
+            >
+            <button class="btn btn-primary px-4" (click)="onSearch()">Search</button>
+            <button class="btn btn-outline-secondary text-nowrap" (click)="clearFilters()">Clear Filters</button>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="text-muted small me-2">Filter by Category:</span>
+            
+            @for (cat of categories(); track cat.id) {
+              <div class="btn-group">
+                <button 
+                  type="button" 
+                  class="btn btn-sm rounded-start-pill"
+                  [class.btn-primary]="selectedCategoryIds().includes(cat.id)"
+                  [class.btn-outline-primary]="!selectedCategoryIds().includes(cat.id)"
+                  (click)="toggleCategoryFilter(cat.id)"
+                >
+                  {{ cat.name }}
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-sm rounded-end-pill"
+                  [class.btn-primary]="selectedCategoryIds().includes(cat.id)"
+                  [class.btn-outline-primary]="!selectedCategoryIds().includes(cat.id)"
+                  (click)="deleteCategory(cat.id, $event)"
+                  title="Delete category"
+                >
+                  &times;
+                </button>
+              </div>
+            }
+            @if (categories().length === 0) {
+              <span class="text-muted small fst-italic">No categories created yet.</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <app-todo-create-card (create)="createTodo($event)"></app-todo-create-card>
+
+      <div class="mb-3">
+        @for (todo of todos(); track todo.id) {
+          <app-todo-card 
+            [todo]="todo" 
+            [availableCategories]="categories()"
+            (update)="updateTodo($event)"
+            (delete)="deleteTodo($event)"
+            (createCategory)="createCategoryForTodo($event)"
+          ></app-todo-card>
+        }
+        @if (todos().length === 0) {
+          <div class="text-center text-muted my-5 py-5 border rounded bg-light">
+            <h4>No todos found</h4>
+          </div>
+        }
+      </div>
+
+      @if (totalCount() > 0) {
+        <div class="d-flex justify-content-between align-items-center bg-white p-3 border rounded shadow-sm">
+          <span class="text-muted">Showing page {{ pageIndex() }} of {{ totalPages }} (Total: {{ totalCount() }})</span>
+          <div class="btn-group">
+            <button class="btn btn-outline-secondary" [disabled]="pageIndex() === 1" (click)="prevPage()">Previous</button>
+            <button class="btn btn-outline-secondary" [disabled]="pageIndex() === totalPages" (click)="nextPage()">Next</button>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

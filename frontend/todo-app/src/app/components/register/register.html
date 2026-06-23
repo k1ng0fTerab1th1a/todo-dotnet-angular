@@ -1,0 +1,37 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header text-center">
+          <h3>Register</h3>
+        </div>
+        <div class="card-body">
+          @if (errorMessage()) {
+            <div class="alert alert-danger">
+              {{ errorMessage() }}
+            </div>
+          }
+          @if (successMessage()) {
+            <div class="alert alert-success">
+              {{ successMessage() }}
+            </div>
+          }
+          <form (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="username" [ngModel]="username()" (ngModelChange)="username.set($event)" name="username" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" [ngModel]="password()" (ngModelChange)="password.set($event)" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100" [disabled]="!username() || !password()">Register</button>
+          </form>
+          <div class="mt-3 text-center">
+            <p>Already have an account? <a routerLink="/login">Login</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
